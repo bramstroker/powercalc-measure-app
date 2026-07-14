@@ -1,0 +1,80 @@
+# Powercalc Measure
+
+Powercalc Measure creates device power profiles using entities already available in Home Assistant. The app is experimental and supports Home Assistant OS on `amd64` and `aarch64` only.
+
+## Before starting
+
+The app repeatedly changes the selected device and may run for hours. Keep the device powered, do not rely on it for safety-critical purposes during the run, and avoid automations or people changing it during a measurement. Confirm that the selected power sensor reports only the load being measured.
+
+The first release supports:
+
+- light profiles from a Home Assistant `light` entity, covering brightness, color-temperature, HS, and supported combined light modes;
+- speaker, fan, and charging (robot vacuum and robot lawn mower) measurements through their Home Assistant entities;
+- average and recorder measurements for any load;
+- power readings from a Home Assistant power sensor in watts (with an optional voltage sensor in volts) or a Shelly plug.
+
+Direct Hue, Tuya, Kasa, Tasmota and myStrom connections, OCR and manual power meters, and dummy resistive loads remain available only in the CLI.
+
+## Installation
+
+1. Open **Settings > Apps > App store** in Home Assistant.
+2. Add the Powercalc Apps repository from the app-store repository menu: `https://github.com/bramstroker/powercalc-measure-app`.
+3. Select **Powercalc Measure**, install it, and wait for the pre-built image to download.
+4. Start the app and select **Open Web UI**.
+
+The app requires Home Assistant OS. It cannot be installed on Home Assistant Container or Core installations; use the standalone measure Docker image there instead.
+
+## Use
+
+1. Start the app and enable **Show in sidebar** if desired.
+2. Select **Open Web UI**.
+3. Choose the measurement type, the device entity, and its power sensor. Add a voltage sensor only when your setup needs it.
+4. Review setup check warnings and settings before starting.
+5. Leave Home Assistant and the measured devices running. Closing or reloading the browser does not stop an active measurement.
+6. Download the generated CSV and model files from the result view.
+
+Home Assistant authenticates ingress and provides Core API access. Do not configure or paste a long-lived token into the app.
+
+### Measurement defaults
+
+Open **Settings** in the app to store defaults that are pre-filled for every new measurement. The default power sensor is the first supported option; leave it set to the meter you use most and each new session starts with it selected. You can still change it per session.
+
+## Sessions, cancellation, and storage
+
+Only one measurement can run at a time. **Cancel** requests a cooperative stop, so an in-flight device call or wait may finish first. Completed CSV rows are retained and may be resumable when the same measurement settings are used.
+
+Session state and output are stored in the app's private `/data` directory. Home Assistant includes this data in app backups. Use the result view to download files; no Home Assistant configuration directory is mounted into the app.
+
+After an app or host restart, reopen the UI. An interrupted session is shown as resumable only when its stored output passes compatibility checks; otherwise it is reported as failed rather than incorrectly completed.
+
+## Troubleshooting
+
+### An entity is missing
+
+Confirm that the device entity or sensor exists and is currently available in Home Assistant. Power sensors must use `W`, and voltage sensors must use `V`. Refresh the app after correcting the entity or its unit.
+
+### Power readings are stale
+
+Check the source integration's update interval and verify that the value changes in Home Assistant Developer Tools while the load changes. A stale meter cannot produce a trustworthy profile.
+
+### The UI disconnected
+
+Ingress or browser reconnects do not own the measurement job. Reload the app to restore the persisted session snapshot. Check the app log if reconnecting repeatedly fails.
+
+### A session was interrupted
+
+Use **Resume** only when the UI offers it and the device, meter, and measurement settings are unchanged. Otherwise start a new measurement and choose overwrite when prompted.
+
+### Storage failed
+
+Check available disk space in Home Assistant, then restart the app. Do not delete app data while a job is active. Restore an app backup if persistent state was damaged.
+
+### Enabling debug logging
+
+Turn on **Debug logging** in the app's **Configuration** tab and restart the app to capture verbose output in the app log. Use it when reporting an issue, then turn it back off once you have collected the log.
+
+### Dummy power meter (developers)
+
+The **Dummy meter** backend under **Settings → Power meter** in the app's web UI replaces the real power sensor with a synthetic reading. It exists only to exercise the measurement flow without a physical load, so any profile produced while it is enabled is meaningless. Keep the backend set to a real power meter for actual measurements.
+
+For additional guidance, see the [Powercalc measure documentation](https://docs.powercalc.nl/contributing/measure/home-assistant-app/).
