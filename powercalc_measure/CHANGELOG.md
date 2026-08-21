@@ -2,10 +2,16 @@
 
 ## Unreleased
 
+## 0.4.1 - 2026-08-21
+
+### 🐛 Bug Fixes
+
+- #4563 Fix connectivity issues broken pipe in measure app @bramstroker
+
 ## 0.4.0 - 2026-08-21
 
 - #4441 Reduce test suite duplication with shared helpers @bramstroker
-- #4473 Document coventional commits @bramstroker
+- #4473 Document conventional commits @bramstroker
 - #4528 Change min_voltage and max_voltage to voltage_range in library @bramstroker
 
 ### 🚀 Features
