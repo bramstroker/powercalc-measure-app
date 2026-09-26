@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.9.0 - 2026-09-26
+
+- #4875 Improve analyser validation and simplify domain models @bramstroker
+
+### 🚀 Features
+
+- #4867 Add developer setting to accept 0 W readings @bramstroker
+- #4874 Analyse vacuum dock activities in the measure recorder @bramstroker
+
+### 🐛 Bug Fixes
+
+- #4860 Call media_player.volume_mute for the muted speaker baseline @LaurensBot
+
 ## 0.8.0 - 2026-09-26
 
 ### 🚀 Features
